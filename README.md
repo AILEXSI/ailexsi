@@ -10,8 +10,8 @@ The goal is not to build a smarter AI.
 
 The goal is to build an AI that **remembers why it said what it said**.
 
-**AILEXSI is not a memory.**  
-**It's a memory that knows what it knows, why it knows it, and what it still needs to find out.**
+**AILEXSI is not a memory.  
+It's a memory that knows what it knows, why it knows it, and what it still needs to find out.**
 
 ---
 
@@ -47,4 +47,8 @@ The model becomes replaceable.
 The memory becomes persistent.  
 **The continuity becomes the product.**
 
-See full models in `ailexsi_core/memory/models.py`.
+## Quick Start
+
+See [docs/](docs/) and [ailexsi_core/](ailexsi_core/)
+
+**L.I.T.A.** 🐇

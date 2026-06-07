@@ -66,6 +66,30 @@ class MemoryEntry(BaseModel):
     parent_id: Optional[str] = None
     version: int = 1
 
+class Relation(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    source_id: str
+    target_id: str
+    relation_type: RelationType
+    strength: float = Field(ge=0.0, le=1.0, default=0.8)
+    confidence: float = Field(ge=0.0, le=1.0, default=0.8)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    evidence_ids: List[str] = Field(default_factory=list)
+
+class ReflectionEntry(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    reflection_type: ReflectionType
+    project: str = "default"
+    based_on_memory_ids: List[str]
+    summary: str
+    insights: List[str]
+    generated_patterns: List[str]
+    narrative: str
+    confidence: float = Field(ge=0.0, le=1.0, default=0.75)
+    evidence_ids: List[str] = Field(default_factory=list)
+    time_period: Optional[Tuple[datetime, datetime]] = None
+
 class PatternEntry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     created_at: datetime = Field(default_factory=datetime.utcnow)
@@ -90,28 +114,4 @@ class NarrativeEntry(BaseModel):
     reflection_ids: List[str] = Field(default_factory=list)
     pattern_ids: List[str] = Field(default_factory=list)
     confidence: float = Field(ge=0.0, le=1.0, default=0.7)
-    time_period: Optional[Tuple[datetime, datetime]] = None
-
-class Relation(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid4()))
-    source_id: str
-    target_id: str
-    relation_type: RelationType
-    strength: float = Field(ge=0.0, le=1.0, default=0.8)
-    confidence: float = Field(ge=0.0, le=1.0, default=0.8)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    evidence_ids: List[str] = Field(default_factory=list)
-
-class ReflectionEntry(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid4()))
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    reflection_type: ReflectionType
-    project: str = "default"
-    based_on_memory_ids: List[str]
-    summary: str
-    insights: List[str]
-    generated_patterns: List[str]
-    narrative: str
-    confidence: float = Field(ge=0.0, le=1.0, default=0.75)
-    evidence_ids: List[str] = Field(default_factory=list)
     time_period: Optional[Tuple[datetime, datetime]] = None
