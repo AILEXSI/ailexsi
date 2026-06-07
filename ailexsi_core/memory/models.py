@@ -13,6 +13,8 @@ class MemoryType(str, Enum):
     QUESTION = "question"
     FACT = "fact"
     RELATION = "relation"
+    REFLECTION = "reflection"
+    PATTERN = "pattern"
 
 class MemoryStatus(str, Enum):
     ACTIVE = "active"
@@ -20,12 +22,24 @@ class MemoryStatus(str, Enum):
     DEPRECATED = "deprecated"
     CONFLICTING = "conflicting"
 
+class ReflectionType(str, Enum):
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+
 class RelationType(str, Enum):
     SUPPORTS = "supports"
     CONTRADICTS = "contradicts"
     LEADS_TO = "leads_to"
     PART_OF = "part_of"
     EVIDENCE_FOR = "evidence_for"
+
+class MemorySource(BaseModel):
+    chat_id: Optional[str] = None
+    session_id: Optional[str] = None
+    model: Optional[str] = None
+    user_id: Optional[str] = None
+    document: Optional[str] = None
 
 class MemoryEntry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
@@ -45,8 +59,11 @@ class MemoryEntry(BaseModel):
     evidence_ids: List[str] = Field(default_factory=list)
     resolved_by: Optional[str] = None
     resolved_at: Optional[datetime] = None
-    source: Dict[str, Any] = Field(default_factory=dict)
+    resolved_reason: Optional[str] = None
+    source: MemorySource = Field(default_factory=MemorySource)
     metadata: Dict[str, Any] = Field(default_factory=dict)
+    parent_id: Optional[str] = None
+    version: int = 1
 
 class Relation(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
@@ -54,5 +71,19 @@ class Relation(BaseModel):
     target_id: str
     relation_type: RelationType
     strength: float = Field(ge=0.0, le=1.0, default=0.8)
+    confidence: float = Field(ge=0.0, le=1.0, default=0.8)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     evidence_ids: List[str] = Field(default_factory=list)
+
+class ReflectionEntry(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    reflection_type: ReflectionType
+    based_on_memory_ids: List[str]
+    summary: str
+    insights: List[str]
+    generated_patterns: List[str]
+    narrative: str
+    confidence: float = Field(ge=0.0, le=1.0, default=0.75)
+    evidence_ids: List[str] = Field(default_factory=list)
+    time_period: Optional[tuple[datetime, datetime]] = None  # nice-to-have
