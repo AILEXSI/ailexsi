@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from uuid import uuid4
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
 class MemoryType(str, Enum):
     DECISION = "decision"
@@ -15,6 +15,7 @@ class MemoryType(str, Enum):
     RELATION = "relation"
     REFLECTION = "reflection"
     PATTERN = "pattern"
+    NARRATIVE = "narrative"
 
 class MemoryStatus(str, Enum):
     ACTIVE = "active"
@@ -65,6 +66,32 @@ class MemoryEntry(BaseModel):
     parent_id: Optional[str] = None
     version: int = 1
 
+class PatternEntry(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    project: str = "default"
+    title: str
+    description: str
+    confidence: float = Field(ge=0.0, le=1.0, default=0.75)
+    evidence_ids: List[str] = Field(default_factory=list)
+    reflection_ids: List[str] = Field(default_factory=list)
+    status: MemoryStatus = MemoryStatus.ACTIVE
+    importance: float = Field(ge=0.0, le=1.0, default=0.7)
+
+class NarrativeEntry(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    project: str = "default"
+    title: str
+    content: str
+    version: int = 1
+    parent_id: Optional[str] = None
+    reflection_ids: List[str] = Field(default_factory=list)
+    pattern_ids: List[str] = Field(default_factory=list)
+    confidence: float = Field(ge=0.0, le=1.0, default=0.7)
+    time_period: Optional[Tuple[datetime, datetime]] = None
+
 class Relation(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     source_id: str
@@ -79,6 +106,7 @@ class ReflectionEntry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     created_at: datetime = Field(default_factory=datetime.utcnow)
     reflection_type: ReflectionType
+    project: str = "default"
     based_on_memory_ids: List[str]
     summary: str
     insights: List[str]
@@ -86,4 +114,4 @@ class ReflectionEntry(BaseModel):
     narrative: str
     confidence: float = Field(ge=0.0, le=1.0, default=0.75)
     evidence_ids: List[str] = Field(default_factory=list)
-    time_period: Optional[tuple[datetime, datetime]] = None  # nice-to-have
+    time_period: Optional[Tuple[datetime, datetime]] = None
