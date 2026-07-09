@@ -9,7 +9,7 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     author="AILEXSI",
-    author_email="martin@ailexsi.com",
+    author_email="ceo@ailexsi.com",
     url="https://github.com/AILEXSI/ailexsi",
     license="MIT",
 )
